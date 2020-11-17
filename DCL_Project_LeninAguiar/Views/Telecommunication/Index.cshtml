@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<h3>Verificar o valor da conta Telefonica</h3>
+<h4>Por segundos utilizados</h4>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4">
+            <span>Valor Final Conta:</span>
+            <span id="endbill"></span>
+        </div>
+        <div class="col-sm-2">
+            <input type="button" value="Calcular" class="btn btn-success" id="calc" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-4">
+            <span>Número Segundos Utilizados:</span>
+            <input type="text" class="form-control money" id="usedseconds" />
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#calc').click(function () {
+            LoadBill();
+        });
+
+        $('.money').keyup(function (event) {
+            const isNumber = /^[0-9]$/i.test(event.key);
+            if (!isNumber ) {
+                //alert(event.key);
+                $(this).val($(this).val().substring(0, $(this).val().length - 1));
+            }
+                
+        });
+    });
+
+    function LoadBill() {
+
+        var usedseconds = $('#usedseconds').val();
+        if (usedseconds == '' ) {
+            alert('Favor preencher dados');
+            return;
+        }
+
+        var myEntry = {};
+        myEntry.usedseconds = usedseconds;
+
+        $.ajax({
+          type: "POST",
+          url: "/api/TeleApi",
+          data: JSON.stringify(myEntry),
+          dataType: "json", //Expected data format from server
+          contentType:"application/json",
+          success: function (data) {
+              //alert('sucesso !');
+              $('#endbill').text(data.bill);
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+              alert('erro de calculo!');
+              alert(jqXHR);
+              alert(textStatus);
+              alert(errorThrown);
+          }
+          //dataType: dataType
+        });
+    }
+</script>

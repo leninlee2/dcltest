@@ -1,0 +1,129 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+<h3>Verificar Salário de Funcionário - Exercício 1</h3>
+<h4>Salário fixo + constante por venda + percentagem por valor do carro</h4>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-4">
+            <span>Salário Final do Vendedor:</span>
+            <span id="endsalary"></span>
+        </div>
+        <div class="col-sm-2" >
+            <input type="button" value="Calcular" class="btn btn-success" id="calc" />
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-sm-4">
+            <span>Salário Base</span>
+            <input type="text" class="form-control money" id="basesalary" />
+        </div>
+
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-sm-4">
+            <span>Adicionar Valor de Venda</span>
+            <input type="text" class="form-control money" id="sellvalue" />
+        </div>
+        <div class="col-sm-2">
+            <br/>
+            <input type="button" class="btn btn-success" value="Adicionar" id="add" />
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-sm-6">
+            <table id="valuegrid" class="table table-striped table-bordered" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Valor Carros</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div> 
+    </div>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.13.4/jquery.mask.min.js"></script>
+<script src="~/Scripts/jquery.maskedinput.js" ></script>
+<script>
+    //$.noConflict();
+    //$('.money').mask('999.999,99', {reverse: true});
+
+    $(document).ready(function () {
+
+        $('#add').click(function () {
+            var value = $('#sellvalue').val();
+            Add(value);
+            $('#sellvalue').val('');
+        });
+
+        $('#calc').click(function () {
+            CalcValue();
+        });
+
+        $('.money').keyup(function (event) {
+            const isNumber = /^[0-9]$/i.test(event.key);
+            if (!isNumber && event.key != '.') {
+                //alert(event.key);
+                $(this).val($(this).val().substring(0, $(this).val().length - 1));
+            }
+                
+
+        });
+
+    });
+
+    function Add(value) {
+        var line = '<tr><td class="valueitem" >{0}</td></tr>'.replace('{0}', value);
+        $('#valuegrid tbody').append(line);
+    }
+
+    function CalcValue() {
+        var value = CollectValues();
+        var basesalary = $('#basesalary').val();
+        if (value == '' || basesalary == '') {
+            alert('Favor preencher dados');
+            return;
+        }
+
+        var myEntry = {};
+        myEntry.value = value;
+        myEntry.basesalary = basesalary;
+        var entry = {"value": value, "basesalary": basesalary};
+
+        $.ajax({
+          type: "POST",
+          url: "/api/SellApi",
+          data: JSON.stringify(myEntry),
+          dataType: "json", //Expected data format from server
+          contentType:"application/json",
+          success: function (data) {
+              $('#endsalary').text(data.endsalary);
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+              alert('erro de calculo!');
+              alert(jqXHR);
+              alert(textStatus);
+              alert(errorThrown);
+          }
+          //dataType: dataType
+        });
+    }
+
+    function CollectValues() {
+        var result = '';
+        $('.valueitem').each(function (c, comp) {
+            result += ';' + $(this).text();
+        });
+        return result;
+    }
+
+</script>

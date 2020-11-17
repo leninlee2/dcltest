@@ -1,0 +1,23 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron">
+    <h1>Teste DCL - Lenin Aguiar</h1>
+    <p class="lead">Projeto com a finalidade de demonstrar a DCL Exercicios Solicitados</p>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2>Exercício 1</h2>
+        <p>
+            Calcular Valor de Vendas e Salário de Funcionário
+        </p>
+        <p>@Html.ActionLink("Revenda de Carros", "Index", new { controller = "Sell" },new { @class = "btn btn-default"})</p>
+    </div>
+    <div class="col-md-6">
+        <h2>Exercício 2</h2>
+        <p>Companhia de Telecomunicações - Valor da Fatura</p>
+        <p>@Html.ActionLink("Telecomunicações", "Index", new { controller = "Telecommunication" }, new { @class = "btn btn-default" })</p>
+    </div>
+</div>
